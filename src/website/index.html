@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Cangjie代码工具集</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1 style="text-align: center;">Cangjie代码实用工具</h1>
+
+        <!-- 工具选择工具栏 -->
+        <div class="toolbar">
+            <select id="toolSelector" onchange="toggleFormFields()">
+                <option value="">请选择工具</option>
+                <option value="generateCodeSignature">生成代码签名</option>
+                <option value="refactorVariable">重命名标识符</option>
+                <option value="generateDocument">生成解释文档</option>
+                <option value="foldConstant">常量折叠</option>
+            </select>
+        </div>
+
+        <div class="form-group" id="signatureExplain">
+            <div class="englishBox">
+                <p class="english">generateCodeSignature</p>
+            </div>
+            
+            <p><strong>该函数的功能是生成代码文件的签名。此处的“签名”包含“函数签名”和“类（接口）签名”，具体到仓颉语言，可以理解为定义接口时使用的无实现成员函数。而类签名则包含了类的声明语句以及它内部成员（包括属性，变量，函数）的签名。</strong></p>
+        </div>
+
+        <div class="form-group" id="refactorExplain">
+            <div class="englishBox">
+                <p class="english">refactorVariable</p>
+            </div>
+        
+            <p><strong>该函数的功能是通过 path 参数指定代码中的一个类或者函数，然后将其作用域内的某个标识符（oldName）全部替换为另一个标识符（newName）。对于函数,作用域是函数签名和函数体这个整体，对于类也完全类似。</strong>
+            </p>
+        </div>
+
+        <div class="form-group" id="documentExplain">
+            <div class="englishBox">
+                <p class="english">generateDocument</p>
+            </div>
+        
+            <p><strong>该函数的功能是通过 path 参数指定代码中的一个类或者函数，然后为其生成解释文档（以块注释的形式展示），用于解释该类或者函数的功能。</strong>
+            </p>
+        </div>
+
+        <div class="form-group" id="foldExplain">
+            <div class="englishBox">
+                <p class="english">foldConstant</p>
+            </div>
+        
+            <p><strong>该函数的功能是将代码中可直接计算的常量进行折叠，不考虑常量传播。例如，如果代码中存在一句''let a = 3 + 2''，则折叠之后这句代码就变为''let a =  5''。</strong>
+            </p>
+        </div>
+
+        <!-- 通用输入字段 -->
+        <div class="form-group" id="codeGroup">
+            <label for="code">源代码：</label>
+            <textarea id="code" rows="10" placeholder="输入源代码..."></textarea>
+        </div>
+
+        <!-- 各工具专用输入字段 -->
+        <!-- 重命名标识符 -->
+        <div class="form-group" id="refactorFields">
+            <label for="path">作用域路径：</label>
+            <input type="text" id="path" placeholder="格式: ClassName 或 ClassName.methodName">
+            <label for="oldName">旧名称：</label>
+            <input type="text" id="oldName">
+            <label for="newName">新名称：</label>
+            <input type="text" id="newName">
+        </div>
+
+        <!-- 生成文档 -->
+        <div class="form-group" id="documentFields">
+            <label for="path">函数名/类名：</label>
+            <input type="text" id="functionName">
+        </div>
+
+        <div style="display: flex; justify-content: flex-end;">
+            <button onclick="submitForm()" style="font-size: larger;">submit & handle</button>  
+        </div>
+
+        <h3>处理结果：</h3>
+        <pre id="result">
+            <code class="codeStyle">
+               
+            </code>
+        </pre>
+        
+    </div>
+
+    <script src="main.js"></script>
+    
+</body>
+
+</html>
