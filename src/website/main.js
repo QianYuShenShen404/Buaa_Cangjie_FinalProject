@@ -1,3 +1,40 @@
+// 页面加载完成后默认选中“生成代码签名”
+document.addEventListener('DOMContentLoaded', function () {
+    const defaultButton = document.querySelector('.tool-button[data-tool="generateCodeSignature"]');
+    if (defaultButton) {
+        defaultButton.classList.add('active');
+        toggleFormFields('generateCodeSignature');
+    }
+});
+
+// 更新工具选择器事件监听
+document.querySelectorAll('.tool-button').forEach(button => {
+    button.addEventListener('click', function () {
+        // 移除所有 active 类
+        document.querySelectorAll('.tool-button').forEach(btn => btn.classList.remove('active'));
+
+        // 添加 active 到当前点击的按钮
+        this.classList.add('active');
+
+        // 触发表单字段切换
+        const tool = this.getAttribute('data-tool');
+        toggleFormFields(tool);
+    });
+});
+
+// 修改 toggleFormFields 函数以接受参数
+function toggleFormFields(tool) {
+    document.querySelectorAll('.form-group').forEach(el => {
+        el.classList.remove('visible');
+    });
+
+    if (tool && toolConfig[tool]) {
+        toolConfig[tool].forEach(id => {
+            document.getElementById(id).classList.add('visible');
+        });
+    }
+}
+
 // 工具字段可见性配置
 const toolConfig = {
     generateCodeSignature: ['signatureExplain', 'codeGroup', 'signatureFields'],
@@ -5,7 +42,7 @@ const toolConfig = {
     generateDocument: ['documentExplain', 'codeGroup', 'documentFields'],
     foldConstant: ['foldExplain', 'codeGroup', 'foldConstantFields']
 };
-
+/*
 // 切换可见表单项
 function toggleFormFields() {
     // 隐藏所有表单项
@@ -21,7 +58,7 @@ function toggleFormFields() {
         });
     }
 }
-
+*/
 // 提交表单
 async function submitForm() {
     const tool = document.getElementById('toolSelector').value;

@@ -11,14 +11,11 @@
         <h1 style="text-align: center;">Cangjie代码实用工具</h1>
 
         <!-- 工具选择工具栏 -->
-        <div class="toolbar">
-            <select id="toolSelector" onchange="toggleFormFields()">
-                <option value="">请选择工具</option>
-                <option value="generateCodeSignature">生成代码签名</option>
-                <option value="refactorVariable">重命名标识符</option>
-                <option value="generateDocument">生成解释文档</option>
-                <option value="foldConstant">常量折叠</option>
-            </select>
+        <div class="toolbar" id="toolSelector">
+            <button class="tool-button active" data-tool="generateCodeSignature">生成代码签名</button>
+            <button class="tool-button" data-tool="refactorVariable">重命名标识符</button>
+            <button class="tool-button" data-tool="generateDocument">生成解释文档</button>
+            <button class="tool-button" data-tool="foldConstant">常量折叠</button>  
         </div>
 
         <div class="form-group" id="signatureExplain">
