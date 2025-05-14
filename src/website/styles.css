@@ -1,13 +1,17 @@
 body {
+    margin: 0;
     font-family: Arial, sans-serif;
-    padding: 20px;
+    display: flex;
+    font-family: '楷体';
 }
 
 .english {
-    font-size: 28px;
+    font-weight: bolder;
+    font-size: 50px;
     font-style: italic;
-    color: #ff0000;
+    color: #00cdac;
     text-align: center;
+    text-shadow: rgba(0, 0, 0, 0.8) 4px 4px 4px;
 }
 
 .englishBox {
@@ -16,19 +20,22 @@ body {
 }
 
 .container {
-    max-width: 800px;
-    margin: 0 auto;
+    flex: 1;
+    padding: 20px;
+    box-sizing: border-box;
+    justify-content: center;
+    display: flex;
 }
 
 .toolbar {
+    background-color: #fff;
+    width: 100%;
+    height: 50%;
     display: flex;
-    justify-content: space-between;
-    /* 按钮之间平均分配空间 */
-    overflow-x: auto;
-    /* 可选：小屏下自动换行 */
-    gap: 10px;
-    /* 按钮之间的间距 */
-    margin: 20px 0;
+    flex-direction: column;
+    /* 纵向排列按钮 */
+    gap: 0;
+    /* 取消按钮之间的间隙 */
 }
 
 .form-group {
@@ -57,44 +64,97 @@ select {
     width: 100%;
     padding: 8px;
     margin-bottom: 10px;
+    background-color: rgba(59, 139, 243, 0.1);
 }
 
 button {
+    /*background-color: #5D9FFF;*/
     padding: 10px 20px;
-    background: #007bff;
-    color: white;
     border: none;
     cursor: pointer;
+    font-family: '仿宋';
+    font-weight: bolder;
+    background-color: #fff;
 }
 
 pre {
-    background: #f4f4f4;
     padding: 15px;
     white-space: pre-wrap;
+    background-color: rgba(59, 139, 243, 0.1);
+    border-radius: 5px;
+    font-size: 20px;
+}
+
+p {
+    font-size: 20px;
 }
 
 /* 工具按钮样式 */
 .tool-button {
-    flex: 1 1 calc(25% - 10px);
-    /* 四个按钮平分宽度，减去gap间距 */
-    min-width: 180px;
-    /* 最小宽度，防止过小 */
-    padding: 15px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    text-align: center;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    box-sizing: border-box;
+    height: 80px;
+    width: 100%;
+    text-align: right;
+    /* 文字右对齐 */
+    padding: 20px, 10px;
+    margin-bottom: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 30px;
 }
 
 .tool-button:hover {
-    background-color: #0056b3;
+    background-image: linear-gradient(-225deg, #fff 0%, #B8DCFF 48%, #6BBBFF 100%);
 }
 
 .tool-button.active {
-    background-color: #004080;
+    background-image: linear-gradient(-225deg, #fff 0%, #B8DCFF 48%, #338edd 100%);
+}
+
+.layout {
+    display: flex;
+    flex-direction: column;
+    width: 60%;
+}
+
+.sidebar {
+    width: 20%;
+    /* 或者使用 width: 20% */
+    padding: 0;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    /* 内容右对齐 */
+    justify-content: start;
+}
+
+.sidebar h2 {
+    font-size: 18px;
+    margin-top: 0;
+}
+
+.main-content {
+    flex: 1;
+    width: 100%;
+}
+
+.sideHead {
+    display: flex;
+    height: 15%;
+    margin: 20px;
+    justify-content: center;
+    align-items: center;
+}
+
+.submitButton {
+    font-size: larger;
+    border-radius: 25px;
+    background-color: rgba(178, 245, 84, 0.3);
+}
+
+.submitButton:hover {
+    background-color: rgba(178, 245, 84, 0.8);
 }

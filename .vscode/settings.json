@@ -1,0 +1,18 @@
+{
+    "terminal.integrated.env.windows": {
+        "CANGJIE_HOME": "D:\\CangJie\\source\\cangjie",
+        "CANGJIE_PATH": "D:\\CangJie\\source\\cangjie\\runtime\\lib\\windows_x86_64_llvm;D:\\CangJie\\source\\cangjie\\bin;D:\\CangJie\\source\\cangjie\\tools\\bin;D:\\CangJie\\source\\cangjie\\debugger\\bin;",
+        "PATH": "${config:terminal.integrated.env.windows.CANGJIE_PATH};${env:PATH}"
+    },
+    "editor.gotoLocation.alternativeDeclarationCommand": "editor.action.revealDefinition",
+    "editor.gotoLocation.alternativeDefinitionCommand": "editor.action.revealDefinition",
+    "editor.gotoLocation.alternativeTypeDefinitionCommand": "editor.action.revealDefinition",
+    "editor.selectionHighlight": false,
+    "files.autoSave": "onFocusChange",
+    "editor.suggest.snippetsPreventQuickSuggestions": false,
+    "editor.quickSuggestions": {
+        "other": "on",
+        "comments": "off",
+        "strings": "on"
+    }
+}

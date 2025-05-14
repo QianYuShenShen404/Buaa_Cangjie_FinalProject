@@ -1,0 +1,16 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "cangjieDebugBuild",
+			"cmd": "D:\\CangJie\\source\\cangjie\\bin\\cjc.exe",
+			"args": [
+				"-g",
+				"d:\\CangJie\\code\\finalProject\\src\\CJCodeTool.cj",
+				"-o",
+				"d:\\CangJie\\code\\finalProject\\src\\CJCodeTool.exe"
+			],
+			"label": "cangjieDebug build task - ucBKHc5TzZ"
+		}
+	]
+}

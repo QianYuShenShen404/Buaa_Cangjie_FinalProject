@@ -1,26 +1,42 @@
-// 页面加载完成后默认选中“生成代码签名”
 document.addEventListener('DOMContentLoaded', function () {
-    const defaultButton = document.querySelector('.tool-button[data-tool="generateCodeSignature"]');
-    if (defaultButton) {
-        defaultButton.classList.add('active');
-        toggleFormFields('generateCodeSignature');
-    }
-});
+    const selectedToolInput = document.getElementById('selectedToolInput');
 
-// 更新工具选择器事件监听
-document.querySelectorAll('.tool-button').forEach(button => {
-    button.addEventListener('click', function () {
+    // 默认选中 generateCodeSignature 按钮
+    const defaultButton = document.getElementById('generateCodeSignature');
+
+
+    if (defaultButton) {
         // 移除所有 active 类
         document.querySelectorAll('.tool-button').forEach(btn => btn.classList.remove('active'));
 
-        // 添加 active 到当前点击的按钮
-        this.classList.add('active');
+        // 添加 active 到默认按钮
+        defaultButton.classList.add('active');
 
-        // 触发表单字段切换
-        const tool = this.getAttribute('data-tool');
+        // 设置隐藏字段并切换表单字段
+        const tool = defaultButton.getAttribute('data-tool');
+        selectedToolInput.value = tool;
+
         toggleFormFields(tool);
+    }
+
+    // 绑定点击事件到每个按钮
+    const buttons = document.querySelectorAll('.tool-button');
+    buttons.forEach(button => {
+        button.addEventListener('click', function () {
+            // 移除所有 active 类
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            // 添加 active 到当前按钮
+            this.classList.add('active');
+
+            // 更新隐藏字段并切换表单字段
+            const tool = this.getAttribute('data-tool');
+            selectedToolInput.value = tool;
+            toggleFormFields(tool);
+        });
     });
 });
+
 
 // 修改 toggleFormFields 函数以接受参数
 function toggleFormFields(tool) {
@@ -37,31 +53,14 @@ function toggleFormFields(tool) {
 
 // 工具字段可见性配置
 const toolConfig = {
-    generateCodeSignature: ['signatureExplain', 'codeGroup', 'signatureFields'],
+    generateCodeSignature: ['signatureExplain', 'codeGroup'],
     refactorVariable: ['refactorExplain', 'codeGroup', 'refactorFields'],
     generateDocument: ['documentExplain', 'codeGroup', 'documentFields'],
-    foldConstant: ['foldExplain', 'codeGroup', 'foldConstantFields']
+    foldConstant: ['foldExplain', 'codeGroup']
 };
-/*
-// 切换可见表单项
-function toggleFormFields() {
-    // 隐藏所有表单项
-    document.querySelectorAll('.form-group').forEach(el => {
-        el.classList.remove('visible');
-    });
-
-    // 显示当前工具需要的表单项
-    const tool = document.getElementById('toolSelector').value;
-    if (tool && toolConfig[tool]) {
-        toolConfig[tool].forEach(id => {
-            document.getElementById(id).classList.add('visible');
-        });
-    }
-}
-*/
 // 提交表单
 async function submitForm() {
-    const tool = document.getElementById('toolSelector').value;
+    const tool = document.getElementById('selectedToolInput').value;
     const code = document.getElementById('code').value;
     const resultElement = document.getElementById('result');
 
@@ -94,15 +93,15 @@ async function submitForm() {
                 resultElement.style.color = '#333';
             } else {
                 resultElement.textContent = `错误：${data.message}`;
-                resultElement.style.color = 'red';
+                resultElement.style.color = 'black';
             }
         } else {
             const text = await response.text();
             resultElement.textContent = text;
-            resultElement.style.color = 'red';
+            resultElement.style.color = 'black';
         }
     } catch (error) {
         resultElement.textContent = `请求失败：${error.message}`;
-        resultElement.style.color = 'red';
+        resultElement.style.color = 'black';
     }
 }
