@@ -70,12 +70,12 @@ async function submitForm() {
     // 收集工具特定参数
     switch (tool) {
         case 'refactorVariable':
-            requestData.path = document.getElementById('path').value;
+            requestData.path = document.getElementById('path_ref').value;
             requestData.oldName = document.getElementById('oldName').value;
             requestData.newName = document.getElementById('newName').value;
             break;
         case 'generateDocument':
-            requestData.path = document.getElementById('path').value;
+            requestData.path = document.getElementById('path_gen').value;
             break;
     }
 

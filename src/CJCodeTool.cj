@@ -4,10 +4,52 @@ import std.collection.*
 import std.convert.*
 
 let doNothing = { => }
+let robot = LLM(url: 'https://api.siliconflow.cn/v1/chat/completions',
+        // 如果示例自带的密钥失效，请自行注册，https://cloud.siliconflow.cn/account/ak
+        key: 'sk-ujrvulmnsdiolckgtjklhqbwbkfudgeglrkxxbzljagbtrnk',
+        model: 'deepseek-ai/DeepSeek-V2.5',
+        context: true)
 
 class CJCodeTool {
-    static func generateCodeSignature(code: String) :  String { 
-        return "";
+    static func generateCodeSignature(code: String) :  String {
+        try {
+            var function : Tokens = cangjieLex(code)
+            var declares = parseProgram(function)
+            var signature = Tokens()
+            for (decl in declares.decls) {
+                if (decl is ClassDecl) {
+                    var classDecl = (decl as ClassDecl).getOrThrow()
+                    var ans = classParse(classDecl)
+                    if (ans == "ILLEGAL INPUT") {
+                        return ans;
+                    }
+                    signature.append(cangjieLex(ans))
+                }
+                else if (decl is InterfaceDecl) {
+                    var interfaceDecl = (decl as InterfaceDecl).getOrThrow()
+                    var ans = interfaceParse(interfaceDecl)
+                    if (ans == "ILLEGAL INPUT") {
+                        return ans;
+                    }
+                    signature.append(cangjieLex(ans))
+                }
+                else if (decl is FuncDecl) {
+                    var funcDecl = (decl as FuncDecl).getOrThrow()
+                    var ans = functionParse(funcDecl)
+                    if (ans == "ILLEGAL INPUT") {
+                        return ans;
+                    }
+                    signature.append(cangjieLex(ans))
+                }
+                else {
+                    return "ILLEGAL INPUT"
+                }
+                signature.append(Token(NL)).append(Token(NL))
+            }
+            return signature.toString()
+        } catch (e : Exception) {
+            return "ILLEGAL INPUT"
+        }
     }
 
     static func refactorVariable(code: String, path: String, oldName: String, newName: String) :  String { 
@@ -31,7 +73,7 @@ class CJCodeTool {
                         continue
                     }
                 }
-                if (decl is ClassDecl) {
+                else if (decl is ClassDecl) {
                     var classDecl = (decl as ClassDecl).getOrThrow()
                     let name = classDecl.identifier.value
                     if (name.compare(clue.className) == Ordering.EQ) {
@@ -65,8 +107,108 @@ class CJCodeTool {
         }
     }
 
-    static func generateDocument(code: String, path: String) :  String { 
-        return ""
+    static func generateDocument(code: String, path: String) :  String {
+        try {
+            robot.preset([(System, '现在的身份是生成代码注释的仓颉代码能手，请用简体中文来回答问题')])
+            var codeTokens = cangjieLex(code)        
+            var clue = Path(path)
+            if (clue.kind == ERROR) {
+                return "ILLEGAL INPUT"
+            }
+            var codeDecls = parseProgram(codeTokens).decls
+            var flag = false
+            var index = 0
+            for (decl in codeDecls) {
+                if (decl is FuncDecl) {
+                    var funcDecl = (decl as FuncDecl).getOrThrow()
+                    let name = funcDecl.identifier.value
+                    if ((clue.kind == FUNC_OR_CLASS) && name.compare(clue.funcName) == Ordering.EQ) {
+                        var doc = "/*\n" + robot.chat("请根据以下代码块生成3行左右的简体中文注释，每行不超过20字，要求解释清楚代码类型和功能，语言类型为仓颉语言，输出换行后的缩进与上一行保持一致。\n" + decl.toTokens().toString()) + "\n*/\n"
+                        var newTokens = Tokens()
+                        while (codeTokens[index] != funcDecl.block.nodes.toTokens()[0]) {
+                            index++
+                        }
+                        var document = String()
+                        var docs = doc.split('\n')
+                        for (i in 0..docs.size - 1) {
+                            document += docs[i] + '\n'
+                            for (_ in 0..4) {
+                                document += " "
+                            }
+                        }
+                        document += docs[docs.size - 1]
+                        newTokens.append(codeTokens[0..index])
+                        newTokens.append(cangjieLex(document))
+                        newTokens.append(codeTokens[index..])
+                        codeTokens = newTokens
+                        flag = true
+                        continue
+                    }
+                }
+                else if (decl is ClassDecl) {
+                    var classDecl = (decl as ClassDecl).getOrThrow()
+                    let name = classDecl.identifier.value
+                    if (name.compare(clue.className) == Ordering.EQ) {
+                        if (clue.kind == FUNC_IN_CLASS) {
+                            for (decl in classDecl.body.decls) {
+                                if (decl is FuncDecl) {
+                                    let funcDecl = (decl as FuncDecl).getOrThrow()
+                                    if (funcDecl.identifier.value.compare(clue.funcName) == Ordering.EQ) {
+                                        var doc = "/*\n" + robot.chat("请根据以下代码块生成3行左右的中文注释，每行不要超过20字，要求解释清楚代码类型和功能，语言类型为仓颉语言，输出换行后的缩进与上一行保持一致。\n" + decl.toTokens().toString()) + "\n*/\n"
+                                        var newTokens = Tokens()
+                                        while (codeTokens[index] != funcDecl.block.nodes.toTokens()[0]) {
+                                            index++
+                                        }
+                                        var docs = doc.split('\n')
+                                        var document = String()
+                                        for (i in 0..docs.size - 1) {
+                                            document += docs[i] + '\n'
+                                            for (_ in 0..8) {
+                                                document += " "
+                                            }
+                                        }
+                                        document += docs[docs.size - 1]
+                                        newTokens.append(codeTokens[0..index])
+                                        newTokens.append(cangjieLex(document))
+                                        newTokens.append(codeTokens[index..])
+                                        codeTokens = newTokens
+                                        flag = true
+                                    }                                }
+                            }
+                            continue
+                        } else {
+                            var doc = "/*\n" + robot.chat("请根据以下代码块生成3行左右的中文注释，每行不超过20字，要求解释清楚代码类型和功能，语言类型为仓颉语言，输出换行后的缩进与上一行保持一致。\n" + decl.toTokens().toString()) + "\n*/\n"
+                            var newTokens = Tokens()
+                            while (codeTokens[index] != classDecl.body.decls.toTokens()[0]) {
+                                index++
+                            }
+                            var docs = doc.split('\n')
+                            var document = String()
+                            for (i in 0..docs.size - 1) {
+                                document += docs[i] + '\n'
+                                for (_ in 0..4) {
+                                    document += " "
+                                }
+                            }
+                            document += docs[docs.size - 1] + "   "
+                            newTokens.append(codeTokens[0..index])
+                            newTokens.append(cangjieLex(document))
+                            newTokens.append(codeTokens[index..])
+                            codeTokens = newTokens
+                            flag = true
+                            continue
+                        }
+                    }
+                }
+                index += decl.toTokens().size
+            }
+            if (!flag) {
+                return "ILLEGAL INPUT"
+            }
+            return codeTokens.toString()
+        } catch (e : Exception) {
+            return "ILLEGAL"
+        }
     }
 
     static func foldConstant(code: String) :  String {
@@ -82,6 +224,173 @@ class CJCodeTool {
         } catch (e: Exception) {
             return "ILLEGAL INPUT"
         }
+    }
+
+    static func functionParse(decl : FuncDecl) : String {
+        var ans = Tokens()
+        for (mod in decl.modifiers) {
+            ans.append(mod)
+        }
+        ans.append(decl.keyword) //添加关键字
+        ans.append(decl.identifier) //添加函数名
+        ans.append(decl.lParen)
+        ans.append(decl.funcParams.toTokens()) //添加函数参数
+        ans.append(decl.rParen)
+        var hasTyp = true
+        try {
+            decl.declType
+        } catch (e : Exception) {
+            hasTyp = false
+        }
+        if (hasTyp) {
+            ans.append(decl.colon)
+            ans.append(decl.declType)
+        }
+        var content = decl.block.nodes
+        for (dec in content) {
+            if ((dec is Decl) && !(dec is VarDecl)) {
+                return "ILLEGAL INPUT"
+            }
+        }
+        return ans.toString()
+    }
+
+    static func classParse(decl : ClassDecl) : String {
+        var ans = Tokens()
+        for (mod in decl.modifiers) {
+            ans.append(mod)
+        } //添加修饰符
+        ans.append(decl.keyword)
+        ans.append(decl.identifier) //添加类名
+        var superType = decl.superTypes
+        if (!superType.isEmpty()) {
+            var types = superType.toTokens()
+            ans.append(decl.upperBound)
+            ans.append(types.get(0))
+            for (i in 1..types.size - 1) {
+                ans.append(decl.superTypeBitAnds) //添加&符号
+                ans.append(types.get(i))
+            }
+        }
+        ans.append(Token(LCURL)).append(Token(NL)) // 添加左大括号
+        var content = decl.body.decls
+        for (dec in content) {
+            try {
+                if (dec is FuncDecl) {
+                    var funcDecl = (dec as FuncDecl).getOrThrow()
+                    var ans1 = functionParse(funcDecl)
+                    if (ans1 == "ILLEGAL INPUT") {
+                        return ans1
+                    }
+                    ans.append(cangjieLex(ans1))
+                }
+                else if (dec is VarDecl) {
+                    var varDecl = (dec as VarDecl).getOrThrow()
+                    ans.append(cangjieLex(varParse(varDecl)))
+                }
+                else if (dec is PropDecl) {
+                    var propDecl = (dec as PropDecl).getOrThrow()
+                    ans.append(cangjieLex(propParse(propDecl)))
+                }
+                else {
+                    return "ILLEGAL INPUT"
+                }
+            } catch (e : Exception) {
+                return "ILLEGAL INPUT"
+            }
+            ans.append(Token(NL)).append(Token(NL))
+        }
+        ans.append(Token(TokenKind.RCURL)) //添加右大括号
+        return ans.toString()
+    }
+
+    static func interfaceParse(decl : InterfaceDecl) : String {
+        var ans = Tokens()
+        for (mod in decl.modifiers) {
+            ans.append(mod)
+        } //添加修饰符
+        ans.append(decl.keyword)
+        ans.append(decl.identifier) //添加类名
+        var superType = decl.superTypes
+        if (!superType.isEmpty()) {
+            var types = superType.toTokens()
+            ans.append(decl.upperBound)
+            ans.append(types.get(0))
+            for (i in 1..types.size - 1) {
+                ans.append(decl.superTypeBitAnds) //添加&符号
+                ans.append(types.get(i))
+            }
+        }
+        ans.append(Token(LCURL)).append(Token(NL)) // 添加左大括号
+        var content = decl.body.decls
+        for (dec in content) {
+            try {
+                if (dec is FuncDecl) {
+                    var funcDecl = (dec as FuncDecl).getOrThrow()
+                    var ans1 = functionParse(funcDecl)
+                    if (ans1 == "ILLEGAL INPUT") {
+                        return ans1
+                    }
+                    ans.append(cangjieLex(ans1))
+                }
+                else if (dec is VarDecl) {
+                    var varDecl = (dec as VarDecl).getOrThrow()
+                    ans.append(cangjieLex(varParse(varDecl)))
+                }
+                else if (dec is PropDecl) {
+                    var propDecl = (dec as PropDecl).getOrThrow()
+                    ans.append(cangjieLex(propParse(propDecl)))
+                }
+                else {
+                    return "ILLEGAL INPUT"
+                }
+            } catch (e : Exception) {
+                return "ILLEGAL INPUT"
+            }
+            ans.append(Token(NL)).append(Token(NL))
+        }
+        ans.append(Token(TokenKind.RCURL)) //添加右大括号
+        return ans.toString()
+    }
+
+    static func varParse(decl : VarDecl) : String {
+        var ans = Tokens()
+        for (mod in decl.modifiers) {
+            ans.append(mod)
+        }
+        ans.append(decl.keyword)
+        ans.append(decl.identifier)
+        var hasTyp = true
+        try {
+            decl.declType
+        } catch (e : Exception) {
+            hasTyp = false
+        }
+        if (hasTyp) {
+            ans.append(decl.colon)
+            ans.append(decl.declType)
+        } //添加声明类型
+        return ans.toString()
+    }
+
+    static func propParse(decl : PropDecl) : String {
+        var ans = Tokens()
+        for (mod in decl.modifiers) {
+            ans.append(mod)
+        }
+        ans.append(decl.keyword) //添加关键字
+        ans.append(decl.identifier)
+        var hasTyp = true
+        try {
+            decl.declType
+        } catch (e : Exception) {
+            hasTyp = false
+        }
+        if (hasTyp) {
+            ans.append(decl.colon)
+            ans.append(decl.declType)
+        } //添加声明类型
+        return ans.toString()
     }
 
     static func refactorFunc(funcDecl: FuncDecl, oldName: String, newName: String) { 

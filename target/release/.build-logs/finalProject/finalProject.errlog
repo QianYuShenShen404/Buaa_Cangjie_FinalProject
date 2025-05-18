@@ -1,49 +1,25 @@
-[33mwarning[0m: unused variable:'code'
- [36m==>[0m D:\CangJie\code\finalProject\src\CJCodeTool.cj:9:39:
-  [36m| [0m
-[36m9[0m [36m| [0m    static func generateCodeSignature(code: String) :  String { [0m
-  [36m| [0m                                      [33m^^^^ unused variable[0m
-  [36m| [0m
-  [36m#[0m [0mnote[0m: this warning can be suppressed by setting the compiler option `-Woff unused`
-
-[33mwarning[0m: unused variable:'code'
-  [36m==>[0m D:\CangJie\code\finalProject\src\CJCodeTool.cj:68:34:
-   [36m| [0m
-[36m68[0m [36m| [0m    static func generateDocument(code: String, path: String) :  String { [0m
-   [36m| [0m                                 [33m^^^^ unused variable[0m
-   [36m| [0m
-   [36m#[0m [0mnote[0m: this warning can be suppressed by setting the compiler option `-Woff unused`
-
-[33mwarning[0m: unused variable:'path'
-  [36m==>[0m D:\CangJie\code\finalProject\src\CJCodeTool.cj:68:48:
-   [36m| [0m
-[36m68[0m [36m| [0m    static func generateDocument(code: String, path: String) :  String { [0m
-   [36m| [0m                                               [33m^^^^ unused variable[0m
-   [36m| [0m
-   [36m#[0m [0mnote[0m: this warning can be suppressed by setting the compiler option `-Woff unused`
-
 [33mwarning[0m: unused expression
-   [36m==>[0m D:\CangJie\code\finalProject\src\CJCodeTool.cj:239:17:
+   [36m==>[0m D:\CangJie\code\finalProject\src\CJCodeTool.cj:548:17:
     [36m| [0m
-[36m239[0m [36m| [0m                doNothing[0m
+[36m548[0m [36m| [0m                doNothing[0m
     [36m| [0m                [33m^^^^^^^^^ unused expression[0m
     [36m| [0m
     [36m#[0m [0mnote[0m: this warning can be suppressed by setting the compiler option `-Woff unused`
 
 [33mwarning[0m: unused expression
-   [36m==>[0m D:\CangJie\code\finalProject\src\CJCodeTool.cj:256:17:
+   [36m==>[0m D:\CangJie\code\finalProject\src\CJCodeTool.cj:565:17:
     [36m| [0m
-[36m256[0m [36m| [0m                doNothing[0m
+[36m565[0m [36m| [0m                doNothing[0m
     [36m| [0m                [33m^^^^^^^^^ unused expression[0m
     [36m| [0m
     [36m#[0m [0mnote[0m: this warning can be suppressed by setting the compiler option `-Woff unused`
 
 [33mwarning[0m: unused expression
-   [36m==>[0m D:\CangJie\code\finalProject\src\CJCodeTool.cj:261:17:
+   [36m==>[0m D:\CangJie\code\finalProject\src\CJCodeTool.cj:570:17:
     [36m| [0m
-[36m261[0m [36m| [0m                doNothing[0m
+[36m570[0m [36m| [0m                doNothing[0m
     [36m| [0m                [33m^^^^^^^^^ unused expression[0m
     [36m| [0m
     [36m#[0m [0mnote[0m: this warning can be suppressed by setting the compiler option `-Woff unused`
 
-6 warnings generated, 6 warnings printed.
+3 warnings generated, 3 warnings printed.
