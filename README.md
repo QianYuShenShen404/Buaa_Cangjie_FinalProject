@@ -13,8 +13,8 @@
 
 本项目分为前端和后端
 
-- 前端采用**`html` `css` `jave script`**构架
-- 后端采用华为发布的**`Cangjie`**语言编写
+- 前端采用`html` `css` `jave script`构架
+- 后端采用华为发布的`Cangjie`语言编写
 
 ## 使用方法
 
